@@ -12,8 +12,9 @@ import (
 
 // RenderOp is one draw instruction: draw Text at (X,Y).
 type RenderOp struct {
-	Text	 string
-	X, Y	 int
+	Text	string
+	X, Y	int
+	Face	font.Face
 }
 
 type Context struct {
@@ -145,7 +146,7 @@ func emitText(tag, text string, indent int, y *int, ops *[]RenderOp, ctx *Contex
 	}
 
 	if ctx.MaxWidth <= 0 {
-		*ops = append(*ops, RenderOp{Text: text, X: indent, Y: *y})
+		*ops = append(*ops, RenderOp{Text: text, X: indent, Y: *y, Face: face})
 		*y += lineH
 		return
 	}
@@ -164,7 +165,7 @@ func emitText(tag, text string, indent int, y *int, ops *[]RenderOp, ctx *Contex
 		}
 		adv := drawer.MeasureString(candidate).Ceil()
 		if adv+indent > ctx.MaxWidth && line != "" {
-			*ops = append(*ops, RenderOp{Text: line, X: indent, Y: *y})
+			*ops = append(*ops, RenderOp{Text: line, X: indent, Y: *y, Face: face})
 			*y += lineH
 			line = w
 		} else {
@@ -172,7 +173,7 @@ func emitText(tag, text string, indent int, y *int, ops *[]RenderOp, ctx *Contex
 		}
 	}
 	if line != "" {
-		*ops = append(*ops, RenderOp{Text: line, X: indent, Y: *y})
+		*ops = append(*ops, RenderOp{Text: line, X: indent, Y: *y, Face: face})
 		*y += lineH
 	}
 }
