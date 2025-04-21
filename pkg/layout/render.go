@@ -90,6 +90,13 @@ func renderListItem(n *dom.Node, indent int, y *int, ops *[]RenderOp, ctx *Conte
 }
 
 func emitText(s string, indent int, y *int, ops *[]RenderOp, ctx *Context) {
+	// guard against 0 width
+	if ctx.MaxWidth <= 0 {
+		*ops = append(*ops, RenderOp{Text: s, X: indent, Y: *y})
+		*y += ctx.LineHeight
+		return
+	}
+
 	words := strings.Fields(s)
 	if len(words) == 0 {
 		*y += ctx.LineHeight
